@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
+use Atlas\Orm\AtlasBuilder;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -26,4 +27,15 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
     ]);
+    $container['atlas'] = function ($container) {
+        $args = $container['settings']['atlas']['pdo'];
+        $atlasBuilder = new AtlasBuilder(...$args);
+        $atlasBuilder->setFactory(function ($class) use ($container) {
+            if ($container->has($class)) {
+                return $container->get($class);
+            }
+            return new $class();
+        });
+        return $atlasBuilder->newAtlas();
+    };
 };

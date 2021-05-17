@@ -5,6 +5,7 @@ use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
 use App\Application\Settings\SettingsInterface;
+use Dotenv\Dotenv;
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
@@ -18,8 +19,14 @@ if (false) { // Should be set to true in production
 	$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 }
 
+$dotenv = Dotenv::createImmutable(__DIR__, '/../.env');
+$dotenv->load();
+
 // Set up settings
-$settings = require __DIR__ . '/../app/settings.php';
+$settings = array_merge_recursive(
+    require __DIR__ . '/../src/settings.php', 
+	require __DIR__ . '/../config/settings.php'
+);
 $settings($containerBuilder);
 
 // Set up dependencies
