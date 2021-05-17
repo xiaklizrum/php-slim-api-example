@@ -27,8 +27,7 @@ return function (ContainerBuilder $containerBuilder) {
             return $logger;
         },
     ]);
-    $container['atlas'] = function ($container) {
-        $args = $container['settings']['atlas']['pdo'];
+    $atlas = function ($container, $args) {
         $atlasBuilder = new AtlasBuilder(...$args);
         $atlasBuilder->setFactory(function ($class) use ($container) {
             if ($container->has($class)) {
@@ -37,5 +36,13 @@ return function (ContainerBuilder $containerBuilder) {
             return new $class();
         });
         return $atlasBuilder->newAtlas();
+    };
+
+    $container['atlas'] = function ($container) use ($atlas) {
+        return $atlas($container, $container['settings']['atlas']['pdo']);
+    };
+
+    $container['atlas-secondary'] = function ($container) use ($atlas) {
+        return $atlas($container, $container['settings']['atlas']['secondary']);
     };
 };
