@@ -13,10 +13,23 @@ services:
     environment:
       - docker="true"
       - LOCALHOST_MACHINE_IP=${LOCALHOST_MACHINE_IP}
-      - COMPOSER_ALLOW_SUPERUSER=1
-      - COMPOSER_PROCESS_TIMEOUT=1200
     ports:
       - ${WEB_EXPOSE_PORT}:8080
+    volumes:
+      - .:/var/www
+      - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini:ro
+  cli:
+    image: kamailio-api/php
+    container_name: slim_cli
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    environment:
+      - docker="true"
+      - LOCALHOST_MACHINE_IP=${LOCALHOST_MACHINE_IP}
+      - COMPOSER_ALLOW_SUPERUSER=1
+      - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - .:/var/www
       - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini:ro
