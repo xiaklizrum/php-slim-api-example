@@ -20,4 +20,17 @@ services:
     volumes:
       - .:/var/www
       - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini:ro
-  
+  db:
+    image: mysql:5.7
+    container_name: slim_db
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes: 
+      - ./docker/mysql/slim:/var/lib/mysql:rw
+      - ./docker/config/mysql:/etc/mysql/conf.d:ro
